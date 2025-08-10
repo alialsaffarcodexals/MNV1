@@ -20,48 +20,48 @@ const COLORS = {
 };
 
 // Simplified board (40 tiles)
-// Names are generic to avoid IP, rents/house costs approximated.
+// Uses real-world street and station names (public domain).
 const BOARD = [
   {type:'GO', name:'GO'},
-  {type:'PROP', name:'Brown 1', color:'BROWN', cost:60, rent:[2,10,30,90,160,250], houseCost:50, houses:0, owner:null},
+  {type:'PROP', name:'Mediterranean Avenue', color:'BROWN', cost:60, rent:[2,10,30,90,160,250], houseCost:50, houses:0, owner:null},
   {type:'CHEST', name:'Community Chest'},
-  {type:'PROP', name:'Brown 2', color:'BROWN', cost:60, rent:[4,20,60,180,320,450], houseCost:50, houses:0, owner:null},
+  {type:'PROP', name:'Baltic Avenue', color:'BROWN', cost:60, rent:[4,20,60,180,320,450], houseCost:50, houses:0, owner:null},
   {type:'TAX', name:'Income Tax', amount:200},
-  {type:'RAIL', name:'Railway E', cost:200, owner:null},
-  {type:'PROP', name:'LightBlue 1', color:'LIGHT_BLUE', cost:100, rent:[6,30,90,270,400,550], houseCost:50, houses:0, owner:null},
+  {type:'RAIL', name:'Reading Railroad', cost:200, owner:null},
+  {type:'PROP', name:'Oriental Avenue', color:'LIGHT_BLUE', cost:100, rent:[6,30,90,270,400,550], houseCost:50, houses:0, owner:null},
   {type:'CHANCE', name:'Chance'},
-  {type:'PROP', name:'LightBlue 2', color:'LIGHT_BLUE', cost:100, rent:[6,30,90,270,400,550], houseCost:50, houses:0, owner:null},
-  {type:'PROP', name:'LightBlue 3', color:'LIGHT_BLUE', cost:120, rent:[8,40,100,300,450,600], houseCost:50, houses:0, owner:null},
+  {type:'PROP', name:'Vermont Avenue', color:'LIGHT_BLUE', cost:100, rent:[6,30,90,270,400,550], houseCost:50, houses:0, owner:null},
+  {type:'PROP', name:'Connecticut Avenue', color:'LIGHT_BLUE', cost:120, rent:[8,40,100,300,450,600], houseCost:50, houses:0, owner:null},
   {type:'JAIL', name:'Jail / Just Visiting'},
-  {type:'PROP', name:'Pink 1', color:'PINK', cost:140, rent:[10,50,150,450,625,750], houseCost:100, houses:0, owner:null},
-  {type:'UTIL', name:'Utility Power', cost:150, owner:null},
-  {type:'PROP', name:'Pink 2', color:'PINK', cost:140, rent:[10,50,150,450,625,750], houseCost:100, houses:0, owner:null},
-  {type:'PROP', name:'Pink 3', color:'PINK', cost:160, rent:[12,60,180,500,700,900], houseCost:100, houses:0, owner:null},
-  {type:'RAIL', name:'Railway N', cost:200, owner:null},
-  {type:'PROP', name:'Orange 1', color:'ORANGE', cost:180, rent:[14,70,200,550,750,950], houseCost:100, houses:0, owner:null},
+  {type:'PROP', name:'St. Charles Place', color:'PINK', cost:140, rent:[10,50,150,450,625,750], houseCost:100, houses:0, owner:null},
+  {type:'UTIL', name:'Electric Company', cost:150, owner:null},
+  {type:'PROP', name:'States Avenue', color:'PINK', cost:140, rent:[10,50,150,450,625,750], houseCost:100, houses:0, owner:null},
+  {type:'PROP', name:'Virginia Avenue', color:'PINK', cost:160, rent:[12,60,180,500,700,900], houseCost:100, houses:0, owner:null},
+  {type:'RAIL', name:'Pennsylvania Railroad', cost:200, owner:null},
+  {type:'PROP', name:'St. James Place', color:'ORANGE', cost:180, rent:[14,70,200,550,750,950], houseCost:100, houses:0, owner:null},
   {type:'CHEST', name:'Community Chest'},
-  {type:'PROP', name:'Orange 2', color:'ORANGE', cost:180, rent:[14,70,200,550,750,950], houseCost:100, houses:0, owner:null},
-  {type:'PROP', name:'Orange 3', color:'ORANGE', cost:200, rent:[16,80,220,600,800,1000], houseCost:100, houses:0, owner:null},
+  {type:'PROP', name:'Tennessee Avenue', color:'ORANGE', cost:180, rent:[14,70,200,550,750,950], houseCost:100, houses:0, owner:null},
+  {type:'PROP', name:'New York Avenue', color:'ORANGE', cost:200, rent:[16,80,220,600,800,1000], houseCost:100, houses:0, owner:null},
   {type:'PARK', name:'Free Parking'},
-  {type:'PROP', name:'Red 1', color:'RED', cost:220, rent:[18,90,250,700,875,1050], houseCost:150, houses:0, owner:null},
+  {type:'PROP', name:'Kentucky Avenue', color:'RED', cost:220, rent:[18,90,250,700,875,1050], houseCost:150, houses:0, owner:null},
   {type:'CHANCE', name:'Chance'},
-  {type:'PROP', name:'Red 2', color:'RED', cost:220, rent:[18,90,250,700,875,1050], houseCost:150, houses:0, owner:null},
-  {type:'PROP', name:'Red 3', color:'RED', cost:240, rent:[20,100,300,750,925,1100], houseCost:150, houses:0, owner:null},
-  {type:'RAIL', name:'Railway W', cost:200, owner:null},
-  {type:'PROP', name:'Yellow 1', color:'YELLOW', cost:260, rent:[22,110,330,800,975,1150], houseCost:150, houses:0, owner:null},
-  {type:'PROP', name:'Yellow 2', color:'YELLOW', cost:260, rent:[22,110,330,800,975,1150], houseCost:150, houses:0, owner:null},
-  {type:'UTIL', name:'Utility Water', cost:150, owner:null},
-  {type:'PROP', name:'Yellow 3', color:'YELLOW', cost:280, rent:[24,120,360,850,1025,1200], houseCost:150, houses:0, owner:null},
+  {type:'PROP', name:'Indiana Avenue', color:'RED', cost:220, rent:[18,90,250,700,875,1050], houseCost:150, houses:0, owner:null},
+  {type:'PROP', name:'Illinois Avenue', color:'RED', cost:240, rent:[20,100,300,750,925,1100], houseCost:150, houses:0, owner:null},
+  {type:'RAIL', name:'B&O Railroad', cost:200, owner:null},
+  {type:'PROP', name:'Atlantic Avenue', color:'YELLOW', cost:260, rent:[22,110,330,800,975,1150], houseCost:150, houses:0, owner:null},
+  {type:'PROP', name:'Ventnor Avenue', color:'YELLOW', cost:260, rent:[22,110,330,800,975,1150], houseCost:150, houses:0, owner:null},
+  {type:'UTIL', name:'Water Works', cost:150, owner:null},
+  {type:'PROP', name:'Marvin Gardens', color:'YELLOW', cost:280, rent:[24,120,360,850,1025,1200], houseCost:150, houses:0, owner:null},
   {type:'GOJAIL', name:'Go To Jail'},
-  {type:'PROP', name:'Green 1', color:'GREEN', cost:300, rent:[26,130,390,900,1100,1275], houseCost:200, houses:0, owner:null},
-  {type:'PROP', name:'Green 2', color:'GREEN', cost:300, rent:[26,130,390,900,1100,1275], houseCost:200, houses:0, owner:null},
+  {type:'PROP', name:'Pacific Avenue', color:'GREEN', cost:300, rent:[26,130,390,900,1100,1275], houseCost:200, houses:0, owner:null},
+  {type:'PROP', name:'North Carolina Avenue', color:'GREEN', cost:300, rent:[26,130,390,900,1100,1275], houseCost:200, houses:0, owner:null},
   {type:'CHEST', name:'Community Chest'},
-  {type:'PROP', name:'Green 3', color:'GREEN', cost:320, rent:[28,150,450,1000,1200,1400], houseCost:200, houses:0, owner:null},
-  {type:'RAIL', name:'Railway S', cost:200, owner:null},
+  {type:'PROP', name:'Pennsylvania Avenue', color:'GREEN', cost:320, rent:[28,150,450,1000,1200,1400], houseCost:200, houses:0, owner:null},
+  {type:'RAIL', name:'Short Line', cost:200, owner:null},
   {type:'CHANCE', name:'Chance'},
-  {type:'PROP', name:'DarkBlue 1', color:'DARK_BLUE', cost:350, rent:[35,175,500,1100,1300,1500], houseCost:200, houses:0, owner:null},
+  {type:'PROP', name:'Park Place', color:'DARK_BLUE', cost:350, rent:[35,175,500,1100,1300,1500], houseCost:200, houses:0, owner:null},
   {type:'TAX', name:'Luxury Tax', amount:100},
-  {type:'PROP', name:'DarkBlue 2', color:'DARK_BLUE', cost:400, rent:[50,200,600,1400,1700,2000], houseCost:200, houses:0, owner:null},
+  {type:'PROP', name:'Boardwalk', color:'DARK_BLUE', cost:400, rent:[50,200,600,1400,1700,2000], houseCost:200, houses:0, owner:null},
 ];
 
 const COLOR_GROUPS = {
@@ -72,7 +72,7 @@ const COLOR_GROUPS = {
   RED: [21,23,24],
   YELLOW: [26,27,29],
   GREEN: [31,32,34],
-  // Dark blue properties are at indices 37 and 39 in BOARD
+  // Dark blue properties (Park Place, Boardwalk) at indices 37 and 39
   DARK_BLUE: [37,39]
 };
 
@@ -213,7 +213,9 @@ function renderBoard(){
       }
       const name = document.createElement('span');
       name.className='name';
-      name.textContent = tile.name;
+      const display = tile.cost ? `${tile.name} — $${tile.cost}` : tile.name;
+      name.textContent = display;
+      cell.title = display;
       cell.appendChild(stripe);
       cell.appendChild(name);
 
@@ -283,9 +285,12 @@ function renderSidebar(){
   if(infoWrap){
     const info = state.players.map(p=>{
       const status = p.bankrupt ? '<span class="bankrupt">مفلس</span>' : `$${p.cash}`;
-      return `<div class="player-card"><div><b style="color:${p.color}">■</b> ${p.name}</div><div>${status}</div></div>`;
+      return `<div class="player-card"><div><b style=\"color:${p.color}\">■</b> ${p.name}</div><div>${status}</div></div>`;
     }).join('');
-    infoWrap.innerHTML = `<div class="sidebar-group">${info}</div>`;
+    if(infoWrap.dataset.last !== info){
+      infoWrap.dataset.last = info;
+      infoWrap.innerHTML = `<div class="sidebar-group">${info}</div>`;
+    }
   }
   // Controls state
   const cur = currentPlayer();
@@ -328,6 +333,33 @@ $('#btn-build').addEventListener('click', ()=>{
   $('#build-panel').classList.toggle('hidden');
   renderBuildPanel();
 });
+$('#build-list').addEventListener('click', (e)=>{
+  const buildBtn = e.target.closest('.btn-build');
+  if(buildBtn){ onBuildHouse(parseInt(buildBtn.dataset.idx,10)); return; }
+  const sellBtn = e.target.closest('.btn-sell');
+  if(sellBtn){ onSellHouse(parseInt(sellBtn.dataset.idx,10)); }
+});
+
+// button press visual feedback
+function findBtn(el){
+  return el.closest('button.primary,button.secondary,button.success,button.warn,button.ghost');
+}
+function pressHandler(e){
+  const b = findBtn(e.target);
+  if(b) b.classList.add('btn-press');
+}
+function releaseHandler(e){
+  const b = findBtn(e.target);
+  if(b) b.classList.remove('btn-press');
+}
+document.addEventListener('mousedown', pressHandler);
+document.addEventListener('touchstart', pressHandler);
+document.addEventListener('keydown', (e)=>{
+  if(e.code==='Space' || e.code==='Enter') pressHandler(e);
+});
+['mouseup','touchend','keyup','blur'].forEach(ev=>{
+  document.addEventListener(ev, releaseHandler, true);
+});
 
 function onRoll(){
   const p = currentPlayer();
@@ -341,9 +373,9 @@ function onRoll(){
     if(d1===d2){
       p.inJail = false;
       p.jailTries = 0;
+      state.doublesCount = 0;
       logMsg(`🎲 ${p.name} خرج من السجن بالدبل (${d1}+${d2}) ويتحرك ${d1+d2} خانات.`);
       movePlayer(p, d1+d2, true);
-      state.doublesCount = 1; // counts as first double
     }else{
       p.jailTries++;
       if(p.getOutCards>0){
@@ -654,12 +686,9 @@ function renderBuildPanel(){
       wrap.appendChild(row);
     });
   }
-  $$('.btn-build').forEach(b=> b.addEventListener('click', onBuildHouse));
-  $$('.btn-sell').forEach(b=> b.addEventListener('click', onSellHouse));
 }
 
-function onBuildHouse(e){
-  const idx = parseInt(e.currentTarget.dataset.idx,10);
+function onBuildHouse(idx){
   const prop = BOARD[idx];
   const me = currentPlayer();
   if(me.cash < prop.houseCost){
@@ -685,8 +714,7 @@ function onBuildHouse(e){
   renderBuildPanel();
 }
 
-function onSellHouse(e){
-  const idx = parseInt(e.currentTarget.dataset.idx,10);
+function onSellHouse(idx){
   const prop = BOARD[idx];
   const me = currentPlayer();
   if((prop.houses||0)<=0) return;
@@ -753,9 +781,7 @@ function applyCard(p, card, type){
         const tile = BOARD[next];
         if(tile.owner!=null && tile.owner!==p.id){
           const diceSum = state.dice[0]+state.dice[1] || (2+Math.floor(Math.random()*10));
-          const utilOwned = countUtils(tile.owner);
-          const mult = utilOwned>=2 ? 10 : 4;
-          const rent = diceSum * mult;
+          const rent = diceSum * 10;
           takeRent(p, tile.owner, rent, tile.name);
         }
         end = false;
