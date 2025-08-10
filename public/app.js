@@ -4,6 +4,37 @@
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+// prefers-reduced settings
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const prefersReducedAudio = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(prefers-reduced-data: reduce)').matches;
+
+// sound handling
+function loadSound(name){
+  if(prefersReducedAudio) return null;
+  const exts=['mp3','ogg','wav'];
+  for(const ext of exts){
+    const a = new Audio();
+    a.preload='auto';
+    a.src = `./Sounds/${name}.${ext}`;
+    if(a.canPlayType(`audio/${ext}`)) return a;
+  }
+  return null;
+}
+
+let volume = prefersReducedAudio ? 0 : parseFloat(localStorage.getItem('volume')||'0.7');
+const diceSnd = loadSound('dice');
+const notifySnd = loadSound('notify');
+function applyVolume(){
+  if(diceSnd) diceSnd.volume = volume;
+  if(notifySnd) notifySnd.volume = volume;
+}
+applyVolume();
+function playSnd(a){
+  if(!a || volume<=0) return;
+  try{ a.currentTime=0; a.volume=volume; a.play(); }catch(e){}
+}
+
+
 // ------------ Data Definitions ------------
 
 const COLORS = {
@@ -79,6 +110,8 @@ const COLOR_GROUPS = {
 const RAIL_INDICES = [5, 15, 25, 35];
 const UTIL_INDICES = [12, 28];
 
+const TOKENS = ['🚗','🐱','🦖','🧭'];
+
 // Chance and Chest decks (subset, shuffled each game)
 const CHANCE_CARDS = [
   {t:'MOVE', to:0, txt:'تقدّم إلى GO واحصل على 200$'},
@@ -146,6 +179,28 @@ function initSetup(){
 $('#player-count').addEventListener('change', initSetup);
 initSetup();
 
+// volume controls
+const volSlider = $('#volume');
+const muteBtn = $('#mute-btn');
+function updateMute(){
+  if(muteBtn) muteBtn.textContent = volume>0 ? '🔊' : '🔇';
+}
+function saveVolume(){ localStorage.setItem('volume', volume); }
+if(volSlider){ volSlider.value = volume; }
+updateMute();
+if(muteBtn){
+  muteBtn.addEventListener('click', ()=>{
+    volume = volume>0 ? 0 : parseFloat(volSlider.value||'0');
+    applyVolume(); saveVolume(); updateMute();
+  });
+}
+if(volSlider){
+  volSlider.addEventListener('input', e=>{
+    volume = parseFloat(e.target.value);
+    applyVolume(); saveVolume(); updateMute();
+  });
+}
+
 $('#toggle-help').addEventListener('click', ()=> $('#help').classList.toggle('hidden'));
 
 $('#start-game').addEventListener('click', startGame);
@@ -160,6 +215,7 @@ function startGame(){
       id:i,
       name,
       color:['#00ffc6','#5cc4ff','#ffc06b','#ff7aa5'][i],
+      token:TOKENS[i],
       cash:START_CASH,
       pos:0,
       inJail:false,
@@ -200,6 +256,7 @@ function renderBoard(){
       const tileIndex = positions[idx].tileIndex;
       const tile = BOARD[tileIndex];
       cell.className = 'tile';
+      cell.setAttribute('tabindex','0');
       const stripe = document.createElement('div');
       stripe.className = 'stripe';
       if(tile.type==='PROP'){
@@ -211,13 +268,33 @@ function renderBoard(){
       }else{
         stripe.style.background = 'linear-gradient(90deg,#223163,#1b2a57)';
       }
+      const emoji = tileEmoji(tile);
+      const displayName = `${emoji} ${tile.name}`.trim();
       const name = document.createElement('span');
       name.className='name';
-      const display = tile.cost ? `${tile.name} — $${tile.cost}` : tile.name;
-      name.textContent = display;
-      cell.title = display;
+      name.textContent = displayName;
       cell.appendChild(stripe);
       cell.appendChild(name);
+      if(tile.cost){
+        const price = document.createElement('span');
+        price.className='price';
+        price.textContent = `$${tile.cost}`;
+        cell.appendChild(price);
+        cell.title = `${displayName} — $${tile.cost}`;
+      }else{
+        cell.title = displayName;
+      }
+
+      const tt = document.createElement('div');
+      tt.className = 'tooltip hidden';
+      tt.id = `tt-${tileIndex}`;
+      tt.setAttribute('role','tooltip');
+      tt.setAttribute('aria-live','polite');
+      tt.innerHTML = buildTooltip(tile);
+      cell.appendChild(tt);
+      cell.setAttribute('aria-describedby', tt.id);
+      ['mouseenter','focus'].forEach(ev=>cell.addEventListener(ev,()=>tt.classList.remove('hidden')));
+      ['mouseleave','blur'].forEach(ev=>cell.addEventListener(ev,()=>tt.classList.add('hidden')));
 
       // owner dot
       if(tile.owner!=null){
@@ -241,10 +318,14 @@ function renderBoard(){
       }
       // players on this tile
       const playersHere = state.players.filter(p=>!p.bankrupt && p.pos===tileIndex);
-      playersHere.forEach(ph=>{
-        const pp = document.createElement('div');
-        pp.className = 'player ' + ('p'+ph.id);
-        pp.title = ph.name;
+      playersHere.forEach((ph,pi)=>{
+        const pp = document.createElement('span');
+        pp.className = 'player';
+        pp.textContent = ph.token;
+        const offsets = [{l:30,t:30},{l:70,t:30},{l:30,t:70},{l:70,t:70}];
+        const off = offsets[pi] || {l:50,t:50};
+        pp.style.left = off.l+'%';
+        pp.style.top = off.t+'%';
         cell.appendChild(pp);
       });
 
@@ -253,6 +334,44 @@ function renderBoard(){
     }
     board.appendChild(cell);
   }
+}
+
+function tileEmoji(tile){
+  switch(tile.type){
+    case 'RAIL': return '🚆';
+    case 'UTIL': return tile.name.includes('Electric') ? '⚡' : '💧';
+    case 'JAIL': return '🚔';
+    case 'GOJAIL': return '🚔';
+    case 'PARK': return '🅿️';
+    case 'GO': return '🟩';
+    case 'CHANCE': return '🎫';
+    case 'CHEST': return '🎁';
+    default: return '';
+  }
+}
+
+function buildTooltip(tile){
+  let html = `<div><b>${tileEmoji(tile)} ${tile.name}</b>`;
+  if(tile.cost) html += ` <span class="price">$${tile.cost}</span>`;
+  html += `</div>`;
+  if(tile.type==='PROP'){
+    html += '<table class="rent">';
+    html += `<tr><th>أساس</th><td>$${tile.rent[0]}</td></tr>`;
+    for(let k=1;k<=4;k++) html += `<tr><th>${k}🏠</th><td>$${tile.rent[k]}</td></tr>`;
+    html += `<tr><th>🏨</th><td>$${tile.rent[5]}</td></tr>`;
+    html += '</table>';
+    html += `<div class="house-cost">🏠: $${tile.houseCost}</div>`;
+  }
+  if(tile.type==='RAIL'){
+    html += '<div>الإيجار: $25/$50/$100/$200</div>';
+  }
+  if(tile.type==='UTIL'){
+    html += '<div>الإيجار: 4× أو 10× نتيجة النرد</div>';
+  }
+  if(tile.owner!=null){
+    html += `<div class="owner">👤 ${state.players[tile.owner].name}</div>`;
+  }
+  return html;
 }
 
 function indexToGridPositions(){
@@ -285,7 +404,7 @@ function renderSidebar(){
   if(infoWrap){
     const info = state.players.map(p=>{
       const status = p.bankrupt ? '<span class="bankrupt">مفلس</span>' : `$${p.cash}`;
-      return `<div class="player-card"><div><b style=\"color:${p.color}\">■</b> ${p.name}</div><div>${status}</div></div>`;
+      return `<div class="player-card"><div><b style=\"color:${p.color}\">${p.token}</b> ${p.name}</div><div>${status}</div></div>`;
     }).join('');
     if(infoWrap.dataset.last !== info){
       infoWrap.dataset.last = info;
@@ -346,7 +465,10 @@ function findBtn(el){
 }
 function pressHandler(e){
   const b = findBtn(e.target);
-  if(b) b.classList.add('btn-press');
+  if(b){
+    b.classList.add('btn-press');
+    if(e.type==='mousedown' || e.type==='touchstart') b.blur();
+  }
 }
 function releaseHandler(e){
   const b = findBtn(e.target);
@@ -357,7 +479,7 @@ document.addEventListener('touchstart', pressHandler);
 document.addEventListener('keydown', (e)=>{
   if(e.code==='Space' || e.code==='Enter') pressHandler(e);
 });
-['mouseup','touchend','keyup','blur'].forEach(ev=>{
+['mouseup','mouseleave','touchend','touchcancel','keyup','blur'].forEach(ev=>{
   document.addEventListener(ev, releaseHandler, true);
 });
 
@@ -370,6 +492,7 @@ function onRoll(){
     const d2 = 1 + Math.floor(Math.random()*6);
     state.dice = [d1,d2];
     updateTurnIndicator();
+    playSnd(diceSnd);
     if(d1===d2){
       p.inJail = false;
       p.jailTries = 0;
@@ -409,6 +532,7 @@ function onRoll(){
   const d2 = 1 + Math.floor(Math.random()*6);
   state.dice = [d1,d2];
   updateTurnIndicator();
+  playSnd(diceSnd);
   const sum = d1 + d2;
 
   if(d1===d2){
@@ -572,6 +696,7 @@ function endTurn(){
   state.doublesCount = 0;
   state.dice=[0,0];
   updateTurnIndicator();
+  playSnd(notifySnd);
   renderSidebar();
   botIfNeeded();
 }
