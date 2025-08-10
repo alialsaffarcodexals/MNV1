@@ -9,8 +9,16 @@
   --success:#1ad598;
   --warn:#ffb454;
   --danger:#ff6b6b;
-  --tile: clamp(36px, min(6.5vw,56px), 64px);
+  /* Responsive tile size: fill available width on small screens */
+  --tile: clamp(20px, calc((100vw - 64px)/11), 64px);
   --price:#19d99f;
+}
+
+@media (min-width: 901px){
+  :root{
+    /* Account for the control sidebar on wider screens */
+    --tile: clamp(20px, calc((100vw - 458px)/11), 64px);
+  }
 }
 *{box-sizing:border-box}
 body{
@@ -75,7 +83,7 @@ body{
   border:1px solid #1f2b59;
   border-radius:8px;
   position:relative;
-  padding:14px 2px 2px;
+  padding:14px 6px 6px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   text-align:center;
   font-size:clamp(6px,0.8vw,11px);
